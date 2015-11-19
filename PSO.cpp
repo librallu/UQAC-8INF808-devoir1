@@ -161,7 +161,8 @@ void InitialisationPositionEtVitesseAleatoire(tParticule &Particule, tProblem un
 void EvaluationPosition(tPosition &Pos, tProblem unProb, tPSO &unPSO)
 {
 	double xd, som1=0.0, som2=0.0, valeur=0.0, p=1;
-	// RAJOUT
+	
+	// ADDING
 	double x1, x2;
 	
 	int d;
