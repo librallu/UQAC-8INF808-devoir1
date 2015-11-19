@@ -161,6 +161,9 @@ void InitialisationPositionEtVitesseAleatoire(tParticule &Particule, tProblem un
 void EvaluationPosition(tPosition &Pos, tProblem unProb, tPSO &unPSO)
 {
 	double xd, som1=0.0, som2=0.0, valeur=0.0, p=1;
+	// RAJOUT
+	double x1, x2;
+	
 	int d;
 
 	switch(unProb.Fonction)
@@ -177,6 +180,12 @@ void EvaluationPosition(tPosition &Pos, tProblem unProb, tPSO &unPSO)
 					valeur += 100*xd*xd;
 				}
 				break;
+		case EGGHOLDER: // Calcul de la fonction eggholder
+				x1 = Pos.X[0];
+				x2 = Pos.X[1];
+				valeur = -(x2+47.)*sin(sqrt( fabs(x2+x1/2.+47) ));
+				valeur -= x1*sin( sqrt(fabs( x1 - (x2+47) )) );
+			break;
 		default: valeur = FLT_MAX;
 	}
 	Pos.FctObj = valeur;
