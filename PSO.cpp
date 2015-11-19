@@ -128,18 +128,19 @@ tPosition InitialisationEssaim(std::vector<tParticule> &unEssaim, tProblem unPro
 //**Détermine le groupement d'informatrices des particules
 void InitialisationInformatrices(std::vector<tParticule> &unEssaim, tPSO &unPSO)
 {
-	int i;
+	int i,j;
 	
-	//***** À DÉFINIR PAR L'ÉTUDIANT *****
-	//Méthode BIDON: une particule a comme informatrice seulement elle-même
-	unPSO.NbInfo = 1;		//À DÉTERMINER: le nombre d'informatrices par particules
+	unPSO.NbInfo = 5;		//À DÉTERMINER: le nombre d'informatrices par particules
 	for(i=0; i<unPSO.Taille; i++)
 	{
 		//Dimension du vecteur d'informatrices
 		unEssaim[i].Info.resize(unPSO.NbInfo);
 
-		//S'ajoute elle-même
-		unEssaim[i].Info[0] = & unEssaim[i];
+		// RAJOUT
+		//construction du réseau d'informatrices
+		for (j=0; j<unPSO.NbInfo; j++){
+			unEssaim[i].Info[j] = &unEssaim[(i+j+1)%(unEssaim.size())];
+		}
 	}
 }
 
