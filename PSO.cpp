@@ -52,7 +52,7 @@ int main(int NbParam, char *Param[])
 	cout.setf(ios::fixed|ios::showpoint);
 	
 	//**Spécifications du problème à traiter
-	LeProb.Fonction = ALPINE;				//**Spécifie le problème traité
+	LeProb.Fonction = EGGHOLDER;				//**Spécifie le problème traité
 	InitialisationIntervalleVariable(LeProb);
 	
 	//**Lecture du fichier de MAXCUT
@@ -88,9 +88,10 @@ void InitialisationIntervalleVariable(tProblem &unProb)
 {
 	switch(unProb.Fonction)
 	{
-		case ALPINE:	unProb.Xmin = -10.0;	unProb.Xmax = 10.0;	unProb.D = 2; break;
-		case BANANE:	unProb.Xmin = -10.0;	unProb.Xmax = 10.0;	unProb.D = 2; break;
-		default:		unProb.Xmin = 0.0;		unProb.Xmax = 0.0;	unProb.D = 0; break; 
+		case ALPINE:	unProb.Xmin = -10.0;	unProb.Xmax = 10.0;		unProb.D = 2; break;
+		case BANANE:	unProb.Xmin = -10.0;	unProb.Xmax = 10.0;		unProb.D = 2; break;
+		case EGGHOLDER:	unProb.Xmin = -512.0;	unProb.Xmax = 512.0;	unProb.D = 2; break;
+		default:		unProb.Xmin = 0.0;		unProb.Xmax = 0.0;		unProb.D = 0; break; 
 	}
 }
 
