@@ -165,7 +165,7 @@ tPosition InitialisationEssaim(std::vector<tParticule> &unEssaim, tProblem unPro
 		if (i == 0)	
 			Meilleure = unEssaim[i].Pos;
 		else
-			if (unEssaim[i].Pos.FctObj < Meilleure.FctObj)
+			if (unEssaim[i].Pos.FctObj > Meilleure.FctObj)
 				Meilleure = unEssaim[i].Pos;
 	}
 	//Retourne la meilleure solution renontrée jusqu'à maintenant
@@ -245,7 +245,7 @@ void EvaluationPosition(tPosition &Pos, tProblem unProb, tPSO &unPSO)
 					for ( int e = 0 ; e < unProb.NbArc ; e++ ) {
 						if ( unProb.Arc[e].Ni == u ) {
 							if ( Pos.X[unProb.Arc[e].Ni] == 1-Pos.X[unProb.Arc[e].Nj] ) {
-								valeur -= unProb.Arc[e].Poids;
+								valeur += unProb.Arc[e].Poids;
 								//~ std::cout << unProb.Arc[e].Ni << " " << unProb.Arc[e].Nj << std::endl;	
 							}
 						}
@@ -272,11 +272,11 @@ void DeplacerEssaim(std::vector<tParticule> &unEssaim, tProblem unProb, tPSO &un
 		EvaluationPosition(unEssaim[i].Pos, unProb, unPSO);
 		
 		//Mise à jour de la meilleure position de la particule-----------
-		if(unEssaim[i].Pos.FctObj <= unEssaim[i].BestPos.FctObj)
+		if(unEssaim[i].Pos.FctObj >= unEssaim[i].BestPos.FctObj)
 		{
 			unEssaim[i].BestPos = unEssaim[i].Pos;
 			//Mémorisation du meilleur résultat atteint jusqu'ici------------
-			if(unEssaim[i].BestPos.FctObj < Meilleure.FctObj)
+			if(unEssaim[i].BestPos.FctObj > Meilleure.FctObj)
 				Meilleure = unEssaim[i].BestPos;
 		}
 	}
@@ -293,7 +293,6 @@ void DeplacerUneParticule(tParticule &Particule, tProblem unProb, tPSO &unPSO)
 {
 	tParticule* MeilleureInfo;
 	int d;
-	double rn;
 
 	//Meilleure informatrice de la particule-----------------------------
 	MeilleureInfo = TrouverMeilleureInformatrice(Particule, unPSO);
@@ -307,34 +306,43 @@ void DeplacerUneParticule(tParticule &Particule, tProblem unProb, tPSO &unPSO)
 
 	//Mise à jour de la nouvelle position--------------------------------
 	if ( unProb.Fonction == MAXCUT ) {
+		
+		// maj de la vitesse si trop élevée
+		if ( Particule.V[d] < -4. ) {
+			Particule.V[d] = -4.; 
+		}
+		if ( Particule.V[d] > 4. ) {
+			Particule.V[d] = 4.;
+		}
+		
 		for(d=0; d<unProb.D; d++){
-			rn = AleaDouble(0., 1.);
-			if ( rn < s(Particule.V[d]) ) {
-				Particule.Pos.X[d] = 1;
+			if ( AleaDouble(0., 1.) < s(Particule.V[d]) ) {
+				Particule.Pos.X[d] = 1.;
 			} else {
-				Particule.Pos.X[d] = 0;
+				Particule.Pos.X[d] = 0.;
 			}
 		}
 			
 	} else {
 		for(d=0; d<unProb.D; d++)
 			Particule.Pos.X[d] += Particule.V[d];
+		//Confinement d'intervalle pour la valeur des positions--------------
+		for(int d=0; d<unProb.D; d++)
+		{
+			if(Particule.Pos.X[d] < unProb.Xmin)
+			{
+				Particule.Pos.X[d] = unProb.Xmin;
+				Particule.V[d] = 0; //Remise à zéro de la vitesse
+			}
+			if(Particule.Pos.X[d] > unProb.Xmax)
+			{
+				Particule.Pos.X[d] = unProb.Xmax;
+				Particule.V[d] = 0; //Remise à zéro de la vitesse
+			}
+		}
 	}
 
-	//Confinement d'intervalle pour la valeur des positions--------------
-	for(int d=0; d<unProb.D; d++)
-	{
-		if(Particule.Pos.X[d] < unProb.Xmin)
-		{
-			Particule.Pos.X[d] = unProb.Xmin;
-			Particule.V[d] = 0; //Remise à zéro de la vitesse
-		}
-		if(Particule.Pos.X[d] > unProb.Xmax)
-		{
-			Particule.Pos.X[d] = unProb.Xmax;
-			Particule.V[d] = 0; //Remise à zéro de la vitesse
-		}
-	}
+
 }
 
 //-----------------------------------------------------------------------
@@ -349,7 +357,7 @@ tParticule* TrouverMeilleureInformatrice(tParticule &Particule, tPSO &unPSO)
 	Valeur = Particule.Info[0]->BestPos.FctObj;
 	for(k=1; k<unPSO.NbInfo; k++)
 	{
-		if(Particule.Info[k]->BestPos.FctObj < Valeur)
+		if(Particule.Info[k]->BestPos.FctObj > Valeur)
 		{
 			Valeur = Particule.Info[k]->BestPos.FctObj;
 			Rang = k;
