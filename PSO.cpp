@@ -178,7 +178,7 @@ void InitialisationInformatrices(std::vector<tParticule> &unEssaim, tPSO &unPSO)
 {
 	int i,j;
 	
-	unPSO.NbInfo = 5;		//À DÉTERMINER: le nombre d'informatrices par particules
+	unPSO.NbInfo = 10;		//À DÉTERMINER: le nombre d'informatrices par particules
 	for(i=0; i<unPSO.Taille; i++)
 	{
 		//Dimension du vecteur d'informatrices
@@ -187,7 +187,8 @@ void InitialisationInformatrices(std::vector<tParticule> &unEssaim, tPSO &unPSO)
 		// RAJOUT
 		//construction du réseau d'informatrices
 		for (j=0; j<unPSO.NbInfo; j++){
-			unEssaim[i].Info[j] = &unEssaim[(i+j+1)%(unEssaim.size())];
+			//~ unEssaim[i].Info[j] = &unEssaim[(i+j+1)%(unEssaim.size())];
+			unEssaim[i].Info[j] = &unEssaim[(int)AleaDouble(0.,(double)unEssaim.size())];
 		}
 	}
 }
