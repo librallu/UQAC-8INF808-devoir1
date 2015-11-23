@@ -407,10 +407,12 @@ void AfficherUneSolution(tPosition Pos, int Iter, tProblem unProb)
 	cout << "ITER #" << Iter << " \t";
 
 	cout << "SOL: ";
-	for(j=0; j<unProb.D; j++)
-	{
-		cout << setprecision(6) << setw(10) << Pos.X[j];
-	}
+	
+	// RAJOUT
+	//~ for(j=0; j<unProb.D; j++)
+	//~ {
+		//~ cout << setprecision(6) << setw(10) << Pos.X[j];
+	//~ }
 	cout <<  "\tFctObj: " << setw(10) << Pos.FctObj;
 	cout << endl;
 }
