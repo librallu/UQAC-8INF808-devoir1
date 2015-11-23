@@ -74,4 +74,5 @@ struct tPSO
 	int		NB_EVAL_MAX;				//**CRITERE D'ARRET: MAXIMUM "NB_EVAL_MAX" EVALUATIONS.
 };
 
-#endif
+#endif //__ENTETE_H_
+

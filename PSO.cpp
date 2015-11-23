@@ -28,7 +28,7 @@ void AfficherProblemeMAXCUT (tProblem unProb);
 // RAJOUT
 void displayEssaim(std::vector<tParticule> &unEssaim) {
 	std::cout << '[';
-	for ( int i = 0 ; i < unEssaim.size(); i++ ) {
+	for ( int i = 0 ; (unsigned)i < unEssaim.size(); i++ ) {
 		std::cout << '(';
 		std::cout << unEssaim[i].Pos.X[0];
 		std::cout << ',';
@@ -36,7 +36,7 @@ void displayEssaim(std::vector<tParticule> &unEssaim) {
 		std::cout << ',';
 		std::cout << unEssaim[i].Pos.FctObj;
 		std::cout << ')';
-		if ( i < unEssaim.size()-1 )
+		if ( (unsigned)i < unEssaim.size()-1 )
 			std::cout << ',';
 	}
 	std::cout << ']';
@@ -211,7 +211,6 @@ void InitialisationPositionEtVitesseAleatoire(tParticule &Particule, tProblem un
 void EvaluationPosition(tPosition &Pos, tProblem unProb, tPSO &unPSO)
 {
 	double xd, som1=0.0, som2=0.0, valeur=0.0, p=1;
-	int noeud_v;
 	
 	// ADDING
 	double x1, x2;
