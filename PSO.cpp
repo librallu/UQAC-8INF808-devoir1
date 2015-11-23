@@ -22,9 +22,56 @@ void AfficherSolutions(std::vector<tParticule> unEssaim, int Debut, int Fin, int
 void AfficherUneSolution(tPosition P, int Iter, tProblem unProb);
 void AfficherResultats (tPosition uneBest, tProblem unProb, tPSO unPSO);
 void LibererMemoireFinPgm (std::vector<tParticule> &unEssaim, tProblem unProb, tPSO unPSO);
-/* ### POUR MAXCUT
 void LectureProblemeMAXCUT(std::string FileName, tProblem & unProb, tPSO &unPSO);
 void AfficherProblemeMAXCUT (tProblem unProb);
+
+// RAJOUT
+void displayEssaim(std::vector<tParticule> &unEssaim) {
+	std::cout << '[';
+	for ( int i = 0 ; i < unEssaim.size(); i++ ) {
+		std::cout << '(';
+		std::cout << unEssaim[i].Pos.X[0];
+		std::cout << ',';
+		std::cout << unEssaim[i].Pos.X[1];
+		std::cout << ',';
+		std::cout << unEssaim[i].Pos.FctObj;
+		std::cout << ')';
+		if ( i < unEssaim.size()-1 )
+			std::cout << ',';
+	}
+	std::cout << ']';
+}
+
+/*void LectureProblemeMAXCUT(std::string FileName, tProblem & unProb, tPSO &unPSO){
+	std::fstream file;
+	file.open(FileName.c_str(), std::fstream::in);
+	int ni, nj, poids;
+	tArc tmp_arc;
+	if ( file.is_open() ){
+		file >> unProb.NbNoeud >> unProb.NbArc;
+		for ( int i = 0 ; i < unProb.NbArc ; i++ ){
+			file >> ni >> nj >> poids;
+			tmp_arc.Ni = ni;
+			tmp_arc.Nj = nj;
+			tmp_arc.Poids = poids;
+			unProb.Arc.push_back(tmp_arc);
+		}
+		file.close();
+	} else {
+		std::cout << "ERREUR lecture fichier" << std::endl;
+	}
+}
+
+void AfficherProblemeMAXCUT (tProblem unProb){
+	std::cout << "=====" << std::endl;
+	for ( int i = 0 ; i < unProb.NbArc ; i++ ){
+		std::cout << unProb.Arc[i].Ni << " " << unProb.Arc[i].Nj << " " << unProb.Arc[i].Poids << std::endl;
+	}
+	std::cout << "=====" << std::endl;
+}*/
+
+/* ### POUR MAXCUT
+
 */
 //******************************************************************************************
 // Fonction main
@@ -36,7 +83,7 @@ int main(int NbParam, char *Param[])
 	std::vector<tParticule> Essaim;		//**Ensemble de solutions 
 	tPosition Best;						//**Meilleure solution depuis le début de l'algorithme
 	
-	//string NomFichier;					//### Pour MAXCUT
+	string NomFichier;					//### Pour MAXCUT
 	
 	//**Lecture des paramètres
 	LePSO.Taille		= atoi(Param[1]);
@@ -44,7 +91,7 @@ int main(int NbParam, char *Param[])
 	LePSO.C2			= atof(Param[3]);
 	LePSO.C3			= atof(Param[4]);
 	LePSO.NB_EVAL_MAX	= atoi(Param[5]);
-	//NomFichier.assign(Param[6]);			//### Pour MAXCUT
+	NomFichier.assign(Param[6]);			//### Pour MAXCUT
 	LePSO.Iter			= 0;
 	LePSO.CptEval		= 0;
 		
@@ -52,12 +99,12 @@ int main(int NbParam, char *Param[])
 	cout.setf(ios::fixed|ios::showpoint);
 	
 	//**Spécifications du problème à traiter
-	LeProb.Fonction = EGGHOLDER;				//**Spécifie le problème traité
+	LeProb.Fonction = MAXCUT;				//**Spécifie le problème traité
 	InitialisationIntervalleVariable(LeProb);
 	
 	//**Lecture du fichier de MAXCUT
-	//LectureProblemeMAXCUT(NomFichier, LeProb, LePSO);			//### Pour MAXCUT
-	//AfficherProblemeMAXCUT(LeProb);							//### Pour MAXCUT
+	LectureProblemeMAXCUT(NomFichier, LeProb, LePSO);			//### Pour MAXCUT
+	AfficherProblemeMAXCUT(LeProb);							//### Pour MAXCUT
 	
 	//**Dimension du tableaux de l'essaim selon le nombre de particules
 	Best = InitialisationEssaim(Essaim, LeProb, LePSO);
@@ -71,10 +118,10 @@ int main(int NbParam, char *Param[])
 	{																									
 		LePSO.Iter++;
 		DeplacerEssaim(Essaim, LeProb, LePSO, Best);  
-		//AfficherSolutions(Essaim, 0, LePSO.Taille, LePSO.Iter, LeProb);
+		//~ AfficherSolutions(Essaim, 0, LePSO.Taille, LePSO.Iter, LeProb);
 		AfficherUneSolution(Best, LePSO.Iter, LeProb);
 	};
-
+	//~ displayEssaim(Essaim);
 	AfficherResultats (Best, LeProb, LePSO);		//**NE PAS ENLEVER
 	LibererMemoireFinPgm(Essaim, LeProb, LePSO);
 
@@ -91,6 +138,7 @@ void InitialisationIntervalleVariable(tProblem &unProb)
 		case ALPINE:	unProb.Xmin = -10.0;	unProb.Xmax = 10.0;		unProb.D = 2; break;
 		case BANANE:	unProb.Xmin = -10.0;	unProb.Xmax = 10.0;		unProb.D = 2; break;
 		case EGGHOLDER:	unProb.Xmin = -512.0;	unProb.Xmax = 512.0;	unProb.D = 2; break;
+		case MAXCUT:	unProb.Xmin = 0;		unProb.Xmax = 1;		unProb.D = unProb.NbNoeud; break;
 		default:		unProb.Xmin = 0.0;		unProb.Xmax = 0.0;		unProb.D = 0; break; 
 	}
 }
@@ -162,6 +210,7 @@ void InitialisationPositionEtVitesseAleatoire(tParticule &Particule, tProblem un
 void EvaluationPosition(tPosition &Pos, tProblem unProb, tPSO &unPSO)
 {
 	double xd, som1=0.0, som2=0.0, valeur=0.0, p=1;
+	int noeud_v;
 	
 	// ADDING
 	double x1, x2;
@@ -187,6 +236,21 @@ void EvaluationPosition(tPosition &Pos, tProblem unProb, tPSO &unPSO)
 				x2 = Pos.X[1];
 				valeur = -(x2+47.)*sin(sqrt( fabs(x2+x1/2.+47) ));
 				valeur -= x1*sin( sqrt(fabs( x1 - (x2+47) )) );
+			break;
+		case MAXCUT: // calcul de la fonction maxcut
+				valeur = 0;
+				//~ std::cout << "===" << std::endl;
+				for ( int u = 0 ; u < unProb.NbNoeud ; u++ ) {
+					for ( int e = 0 ; e < unProb.NbArc ; e++ ) {
+						if ( unProb.Arc[e].Ni == u ) {
+							if ( Pos.X[unProb.Arc[e].Ni] == 1-Pos.X[unProb.Arc[e].Nj] ) {
+								valeur -= unProb.Arc[e].Poids;
+								//~ std::cout << unProb.Arc[e].Ni << " " << unProb.Arc[e].Nj << std::endl;	
+							}
+						}
+					}
+				}
+				//~ std::cout << "===" << std::endl;
 			break;
 		default: valeur = FLT_MAX;
 	}
@@ -217,12 +281,18 @@ void DeplacerEssaim(std::vector<tParticule> &unEssaim, tProblem unProb, tPSO &un
 	}
 }
 
+// RAJOUT
+double s(double v) {
+	return 1./(1.+exp(-v));
+}
+
 //-----------------------------------------------------------------------
 //Déplacement d'une seule particule
 void DeplacerUneParticule(tParticule &Particule, tProblem unProb, tPSO &unPSO)
 {
 	tParticule* MeilleureInfo;
 	int d;
+	double rn;
 
 	//Meilleure informatrice de la particule-----------------------------
 	MeilleureInfo = TrouverMeilleureInformatrice(Particule, unPSO);
@@ -233,9 +303,22 @@ void DeplacerUneParticule(tParticule &Particule, tProblem unProb, tPSO &unPSO)
 							AleaDouble(0,unPSO.C2) * (Particule.BestPos.X[d] - Particule.Pos.X[d]) + 
 							AleaDouble(0,unPSO.C3) * (MeilleureInfo->BestPos.X[d] - Particule.Pos.X[d]);
 
+
 	//Mise à jour de la nouvelle position--------------------------------
-	for(d=0; d<unProb.D; d++)
-		Particule.Pos.X[d] += Particule.V[d];
+	if ( unProb.Fonction == MAXCUT ) {
+		for(d=0; d<unProb.D; d++){
+			rn = AleaDouble(0., 1.);
+			if ( rn < s(Particule.V[d]) ) {
+				Particule.Pos.X[d] = 1;
+			} else {
+				Particule.Pos.X[d] = 0;
+			}
+		}
+			
+	} else {
+		for(d=0; d<unProb.D; d++)
+			Particule.Pos.X[d] += Particule.V[d];
+	}
 
 	//Confinement d'intervalle pour la valeur des positions--------------
 	for(int d=0; d<unProb.D; d++)
@@ -337,6 +420,7 @@ void AfficherResultats (tPosition uneBest, tProblem unProb, tPSO unPSO)
 	{
 		case ALPINE: cout << "ALPINE"; break;
 		case BANANE: cout << "BANANE"; break;
+		case MAXCUT: cout << "MAXCUT"; break;
 		default: cout << " a definir...";
 	}
 	cout << endl; 
@@ -370,7 +454,7 @@ void LibererMemoireFinPgm (std::vector<tParticule> &unEssaim, tProblem unProb, t
 //**-----------------------------------------------------------------------
 //**Lecture du Fichier probleme MAXSAT et initialiation de la structure Problem
 //**NB: Lors de la lecture, le numéro des noeuds est transformé (0 à NbNoeud-1 AU LIEU de 1 à NbNoeud)
-/* ### POUR MAXCUT
+/* ### POUR MAXCUT */
 void LectureProblemeMAXCUT(std::string FileName, tProblem & unProb, tPSO &unPSO)
 {
 	ifstream	Fichier;
@@ -379,7 +463,7 @@ void LectureProblemeMAXCUT(std::string FileName, tProblem & unProb, tPSO &unPSO)
 	unProb.Nom = FileName;
 	Fichier.open(unProb.Nom.c_str(), ios::in) ;
 	if (Fichier.fail())
-		cout << "Erreur … l'ouverture" << endl ;
+		cout << "Erreur a l'ouverture" << endl ;
 	else
 	{
 		Fichier >> unProb.NbNoeud >> unProb.NbArc; // Lecture du nombre de noeuds (dimension) et du nombre d'arcs
@@ -397,9 +481,10 @@ void LectureProblemeMAXCUT(std::string FileName, tProblem & unProb, tPSO &unPSO)
 		
 		Fichier.close() ;
 		if (Fichier.fail())
-			cout << "Erreur … la fermeture" << endl ;
+			cout << "Erreur a la fermeture" << endl ;
 	}
 }
+
 //**-----------------------------------------------------------------------
 //Fonction d'affichage à l'écran permettant de voir si les données du fichier problème ont été lues correctement
 void AfficherProblemeMAXCUT (tProblem unProb)
@@ -419,4 +504,4 @@ void AfficherProblemeMAXCUT (tProblem unProb)
 	cout << endl << "*******************************************************";
 	cout << endl << endl;
 }
-*/
+
