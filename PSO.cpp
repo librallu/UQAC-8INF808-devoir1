@@ -84,22 +84,22 @@ int main(int NbParam, char *Param[])
 	tPosition Best;						//**Meilleure solution depuis le début de l'algorithme
 	
 	string NomFichier;					//### Pour MAXCUT
-	
+	//**Spécifications du problème à traiter
+	LeProb.Fonction = ALPINE;				//**Spécifie le problème traité
 	//**Lecture des paramètres
 	LePSO.Taille		= atoi(Param[1]);
 	LePSO.C1			= atof(Param[2]);
 	LePSO.C2			= atof(Param[3]);
 	LePSO.C3			= atof(Param[4]);
 	LePSO.NB_EVAL_MAX	= atoi(Param[5]);
-	NomFichier.assign(Param[6]);			//### Pour MAXCUT
+	if(LeProb.Fonction == MAXCUT) NomFichier.assign(Param[6]);			//### Pour MAXCUT
 	LePSO.Iter			= 0;
 	LePSO.CptEval		= 0;
 		
 	srand((unsigned) time(NULL));			//**Precise un germe pour le generateur aleatoire
 	cout.setf(ios::fixed|ios::showpoint);
 	
-	//**Spécifications du problème à traiter
-	LeProb.Fonction = MAXCUT;				//**Spécifie le problème traité
+	
 	InitialisationIntervalleVariable(LeProb);
 	
 	//**Lecture du fichier de MAXCUT
